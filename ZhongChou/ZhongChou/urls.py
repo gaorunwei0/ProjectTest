@@ -15,15 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 import xadmin
-from users.views import IndexView
+from users.views import index
 
 
 # from django.contrib import admin
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
-	url(r'xadmin',xadmin.site.urls),
-	url(r'^$',IndexView.as_view(),name='index'),
-	url(r'^users', include('users.urls', namespace='users')),
+	url(r'xadmin/',xadmin.site.urls),
+	url(r'^$',index,name='index'),
+	url(r'^users/', include('users.urls', namespace='users')),
 
 ]

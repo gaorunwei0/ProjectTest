@@ -56,7 +56,15 @@
                 <button class="btn btn-lg btn-success btn-block" type="submit">注册</button>
 {#				<a class="btn btn-lg btn-success btn-block" href="member.html" > 注册</a>#}
 {#				<a class="btn btn-lg btn-success btn-block"  type="submit"> 注册</a>#}
+                <div>
+                    {{ msg }}
+                    {% for key,err in user_register_form.errors.items %}
+                        {{ err }}
+                    {% endfor %}
+
+                </div>
 			</form>
+
 		</div>
 		<script src="{% static 'jquery/jquery-2.1.1.min.js' %}"></script>
 		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
