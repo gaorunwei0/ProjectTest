@@ -32,7 +32,12 @@ class UserRegForm(forms.Form):
 	})
 
 class UserapplyDataForm(forms.Form):
-	user_data = forms.CharField(max_length=10, min_length=1, required=True)
 	name = forms.CharField(error_messages={'required':'真实姓名必须填写'})
 	idcard = forms.CharField(error_messages={'required':'身份证必须填写'})
-	phonenum = forms.IntegerField(error_messages={'required':'手机号必须填写'})
+	phonenum = forms.CharField(error_messages={'required':'手机号必须填写'})
+
+class Userapply_1_DataForm(forms.Form):
+	user_image = forms.CharField(error_messages={'required':'请上传身份证照片'})
+
+class Userapply_2_DataForm(forms.Form):
+	email_yanzheng = forms.CharField(error_messages={'required':'请填写邮箱'})

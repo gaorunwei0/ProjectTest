@@ -109,6 +109,9 @@
 
                                     {% if not  request.user.is_activation %}
                                         <span class="label label-danger" style="cursor:pointer;" onclick="window.location.href='{% url "users:accttype" %}'">未实名认证</span>
+                                    {% elif not request.user.is_activation_sure %}
+                                     <span class="label label-danger" style="cursor:pointer;" >等待审核</span>
+
                                     {% else %}  <span class="label label-danger" style="cursor:pointer;" >{{ request.user.get_accounttype_display }}</span>
                                     {% endif %}
 

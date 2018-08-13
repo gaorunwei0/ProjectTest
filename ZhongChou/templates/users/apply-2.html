@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="zh-CN">
 
 	<head>
@@ -7,9 +8,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/font-awesome.min.css">
-		<link rel="stylesheet" href="css/theme.css">
+		<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/theme.css' %}">
 		<style>
 			#footer {
 				padding: 15px 0;
@@ -21,37 +22,48 @@
 	</head>
 
 	<body>
-		<div class="navbar-wrapper">
+	<div class="navbar-wrapper">
 			<div class="container">
 				<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 					<div class="container">
 						<div class="navbar-header">
-							<a class="navbar-brand" href="index.html" style="font-size:32px;">尚筹网-创意产品众筹平台</a>
+							<a class="navbar-brand" href="{% url 'index' %}" style="font-size:32px;">尚筹网-创意产品众筹平台</a>
 						</div>
 						<div id="navbar" class="navbar-collapse collapse" style="float:right;">
-							<ul class="nav navbar-nav">
+{% if request.user.is_authenticated %}
+                            <ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> 尚硅谷<span class="caret"></span></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> {{ request.user }}<span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">
 										<li>
-											<a href="member.html"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
+											<a href="{% url 'users:member' %}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
 										</li>
-										<!--<li>-->
-											<!--<a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a>-->
-										<!--</li>-->
 										<li class="divider"></li>
 										<li>
-											<a href="index.html"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
+											<a href="{% url 'users:logout' %}"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
 										</li>
 									</ul>
 								</li>
 							</ul>
+{% else %}
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<a href={% url 'users:login' %}>登录</a>
+								</li>
+								<li>
+									<a href={% url 'users:reg' %}>注册</a>
+								</li>
+							</ul>
+ {% endif %}
 						</div>
 					</div>
 				</nav>
 
 			</div>
 		</div>
+
+
+
 
 		<div class="container theme-showcase" role="main">
 			<div class="page-header">
@@ -65,13 +77,20 @@
 				<li role="presentation"><a href="#"><span class="badge">4</span> 申请确认</a></li>
 			</ul>
 
-			<form role="form" style="margin-top:20px;">
+			<form role="form" style="margin-top:20px;" action="{% url 'users:apply_2' %}" method="post">
+            {% csrf_token %}
 				<div class="form-group">
 					<label for="exampleInputEmail1">邮箱地址</label>
-					<input type="text" class="form-control" id="exampleInputEmail1" placeholder="请输入用于接收验证码的邮箱地址">
+					<input type="text" class="form-control" id="exampleInputEmail1" placeholder="请输入用于接收验证码的邮箱地址" name="email_yanzheng">
 				</div>
-				<button type="button" onclick="window.location.href='apply-1.html'" class="btn btn-default">上一步</button>
-				<button type="button" onclick="window.location.href='apply-3.html'" class="btn btn-success">下一步</button>
+                <div class="form-group">
+                    {{ msg }}
+                        {% for key,err in user_error.errors.items %}
+                            {{ err }}
+                        {% endfor %}
+				</div>
+				<button type="button" onclick="window.location.href='{% url 'users:apply_1' %}'" class="btn btn-default">上一步</button>
+				<button type="submit" onclick="window.location.href='apply-3.html'" class="btn btn-success">下一步</button>
 			</form>
 			<hr>
 		</div>
@@ -95,9 +114,9 @@
 				</div>
 			</div>
 		</div>
-		<script src="jquery/jquery-2.1.1.min.js"></script>
-		<script src="bootstrap/js/bootstrap.min.js"></script>
-		<script src="script/docs.min.js"></script>
+		<script src="{% static 'jquery/jquery-2.1.1.min.js' %}"></script>
+		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'script/docs.min.js' %}"></script>
 		<script>
 			$('#myTab a').click(function(e) {
 				e.preventDefault()

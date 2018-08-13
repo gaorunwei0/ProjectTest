@@ -75,10 +75,11 @@
 				<li role="presentation"><a href="#"><span class="badge">4</span> 申请确认</a></li>
 			</ul>
 
-			<form role="form" style="margin-top:20px;">
+			<form role="form" style="margin-top:20px;" method="post" action="{% url 'users:apply' %}">
+                {% csrf_token %}
 				<div class="form-group">
 					<label for="exampleInputRealname">真实名称</label>
-					<input type="text" class="form-control" id="exampleInputRealname" placeholder="请输入真实名称" name="realname">
+					<input type="text" class="form-control" id="exampleInputRealname" placeholder="请输入真实名称" name="name">
 				</div>
 				<div class="form-group">
 					<label for="exampleInputIdcardnum">身份证号码</label>
@@ -88,10 +89,17 @@
 					<label for="exampleInputMobile">电话号码</label>
 					<input type="text" class="form-control" id="exampleInputMobile" placeholder="请输入电话号码" name="phonenum">
 				</div>
+                <div class="form-group">
+                    {{ msg }}
+                        {% for key,err in user_error.errors.items %}
+                            {{ err }}
+                        {% endfor %}
+				</div>
 				<button type="button" onclick="window.location.href='{% url 'users:accttype' %}'" class="btn btn-default">上一步</button>
-				<button type="button" onclick="window.location.href='apply-1.html'" class="btn btn-success">下一步</button>
-			</form>
-			<hr>
+				<button type="submit" onclick="window.location.href='apply-1.html'" class="btn btn-success">下一步</button>
+
+            </form>
+
 		</div>
 		<!-- /container -->
 		<div class="container" style="margin-top:20px;">
