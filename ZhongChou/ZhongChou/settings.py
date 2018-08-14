@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'ZhongChou.urls'
@@ -68,6 +69,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+
             ],
         },
     },
@@ -136,7 +139,7 @@ STATICFILES_DIRS = [
 # STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 MEDIA_URL = '/static/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'static/media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'static/media/')
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -43,7 +43,7 @@ class UserProfile_tem(models.Model):
 	name = models.CharField(max_length=30, verbose_name='真实姓名',blank=True,null=True)
 	phonenum = models.CharField(max_length=11,verbose_name='手机号',blank=True,null=True)
 	idcard = models.CharField(max_length=18,verbose_name='身份证',blank=True,null=True)
-	user_image = models.ImageField(max_length=200,upload_to='user_image',verbose_name='身份证照片',blank=True,null=True)
+	user_image = models.ImageField(max_length=200,upload_to='user_images',verbose_name='身份证照片',blank=True,null=True)
 	email_yanzheng = models.CharField(max_length=50,verbose_name='验证邮箱',blank=True,null=True)
 	email_code = models.CharField(max_length=4,verbose_name='验证码',blank=True,null=True)
 	time_last = models.DateTimeField(verbose_name='重新发送时间',default=datetime.now)

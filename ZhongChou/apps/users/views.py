@@ -121,21 +121,6 @@ def user_apply_1(request):
 	if request.method=='GET':
 		return render(request, 'users/apply-1.html')
 	else:
-		# apply_one = Userapply_1_DataForm(request.POST)
-		# if apply_one.is_valid():
-		# 	# user_image = apply_one.cleaned_data['user_image']
-		# 	a = UserProfile_tem.objects.get(user=request.user.username)
-		# 	a.user_image = request.FILES.get('user_image')
-		# 	print('22222222222222')
-		# 	a.save()
-		# 	return redirect(reverse('users:apply_2'))
-		# else:
-		# 	return render(request, 'users/apply-1.html', {
-		# 		'user_error': apply_one
-		# 	})
-
-
-		# user_image = apply_one.cleaned_data['user_image']
 		a = UserProfile_tem.objects.get(user=request.user.username)
 		a.user_image = request.FILES.get('user_image','')
 		print('22222222222222')
@@ -194,6 +179,7 @@ def user_apply_3(request):
 			b.user_image = a.user_image
 			b.email_yanzheng = a.email_yanzheng
 			b.save()
+			a.delete()
 			return redirect(reverse('users:member'))
 		else:
 			return render(request, 'users/apply-3.html', {
@@ -218,8 +204,8 @@ def code_rest(request):
 		a.save()
 		email_yanzheng = a.email_yanzheng
 		msg = "验证码是:" + str(email_code)
-		# send_mail('Your Code', msg, settings.EMAIL_HOST_USER,
-		#           [email_yanzheng], fail_silently=False)
+		send_mail('Your Code', msg, settings.EMAIL_HOST_USER,
+		          [email_yanzheng], fail_silently=False)
 		return render(request, 'users/apply-3.html')
 	else:
 		print('11111')
@@ -227,3 +213,6 @@ def code_rest(request):
 			'user_errors': '操作频繁,请稍后再试'
 		})
 
+def owner_pro(request):
+	if request.method=="GET":
+		return render(request, 'users/minecrowdfunding.html')

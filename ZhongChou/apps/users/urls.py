@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views import user_login, user_reg, user_logout, user_member, user_accttype, user_apply, user_apply_1, \
-	user_apply_2, user_apply_3, code_rest
+	user_apply_2, user_apply_3, code_rest, owner_pro
 
 # from django.contrib import admin
 
@@ -31,4 +31,5 @@ urlpatterns = [
 	url(r'^apply_2/$',user_apply_2,name='apply_2'),
 	url(r'^apply_3/$',user_apply_3,name='apply_3'),
 	url(r'^code_rest/$',code_rest,name='code_rest'),
+	url(r'^owner_pro/$',owner_pro,name='owner_pro'),
 ]
