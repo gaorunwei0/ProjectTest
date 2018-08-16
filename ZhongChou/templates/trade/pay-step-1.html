@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="zh-CN">
 
 	<head>
@@ -7,9 +8,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/font-awesome.min.css">
-		<link rel="stylesheet" href="css/theme.css">
+		<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/theme.css' %}">
 		<style>
 			#footer {
 				padding: 15px 0;
@@ -122,36 +123,48 @@
 	</head>
 
 	<body>
-		<div class="navbar-wrapper">
+
+<div class="navbar-wrapper">
 			<div class="container">
 				<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 					<div class="container">
 						<div class="navbar-header">
-							<a class="navbar-brand" href="index.html" style="font-size:32px;">尚筹网-创意产品众筹平台</a>
+							<a class="navbar-brand" href={% url 'index' %} style="font-size:32px;">尚筹网-创意产品众筹平台</a>
 						</div>
 						<div id="navbar" class="navbar-collapse collapse" style="float:right;">
-							<ul class="nav navbar-nav">
+{% if request.user.is_authenticated %}
+                            <ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> 尚硅谷<span class="caret"></span></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> {{ request.user }}<span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">
 										<li>
-											<a href="member.html"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
+											<a href="{% url 'users:member' %}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
 										</li>
-										<!--<li>-->
-											<!--<a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a>-->
-										<!--</li>-->
 										<li class="divider"></li>
 										<li>
-											<a href="index.html"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
+											<a href="{% url 'users:logout' %}"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
 										</li>
 									</ul>
 								</li>
 							</ul>
+{% else %}
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<a href={% url 'users:login' %}>登录</a>
+								</li>
+								<li>
+									<a href={% url 'users:reg' %}>注册</a>
+								</li>
+							</ul>
+ {% endif %}
 						</div>
 					</div>
 				</nav>
+
 			</div>
 		</div>
+
+
 
 		<div class="container theme-showcase" role="main">
 
@@ -210,6 +223,8 @@
 											</blockquote>
 										</div>
 										<div class="col-md-12 column">
+                                            <form action="{% url 'trade:pay_2' re_pro.id %}" method="post">
+                                            {% csrf_token %}
 											<table class="table table-bordered" style="text-align:center;">
 												<thead>
 													<tr style="background-color:#ddd;">
@@ -223,21 +238,24 @@
 												</thead>
 												<tbody>
 													<tr>
-														<td>活性富氢净水直饮机</td>
-														<td>深圳市博实永道电子商务有限公司</td>
-														<td>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</td>
-														<td><input type="text" class="form-control" style="width:60px;" value="1"></td>
-														<td style="color:#F60">￥ 1.00</td>
-														<td>免运费</td>
+														<td>{{ re_pro.pro.name }}</td>
+														<td>{{ re_pro.pro.owner.username }}</td>
+														<td>{{ re_pro.re_text }}</td>
+														<td><input type="text" class="form-control" style="width:60px;" value="1" name="num" id="numone"></td>
+														<td style="color:#F60">￥ {{ re_pro.money }}</td>
+														<td>{% if re_pro.freight %}
+														￥{{ re_pro.freight }}
+                                                            {% else %}免运费
+														{% endif %}</td>
 													</tr>
 												</tbody>
 											</table>
 											<div style="float:right;">
-												<p>总价(含运费)：<span style="font-size:16px;color:#F60;">￥1.00</span></p>
-												<button type="button" class="btn btn-warning btn-lg" style="float:right;" onclick="window.location.href='pay-step-2.html'"><i class="glyphicon glyphicon-credit-card"></i> 去结算</button>
+												<p>总价(含运费)：<span style="font-size:16px;color:#F60;">￥<span id="price">1</span></span></p>
+												<button type="submit" class="btn btn-warning btn-lg" style="float:right;"><i class="glyphicon glyphicon-credit-card"></i> 去结算 </button>
 											</div>
+                                            </form>
 										</div>
-
 										<div class="container">
 											<div class="row clearfix">
 												<div class="col-md-12 column">
@@ -286,15 +304,21 @@
 
 		</div>
 		<!-- /container -->
-		<script src="jquery/jquery-2.1.1.min.js"></script>
-		<script src="bootstrap/js/bootstrap.min.js"></script>
-		<script src="script/docs.min.js"></script>
-		<script src="script/back-to-top.js"></script>
+		<script src="{% static 'jquery/jquery-2.1.1.min.js' %}"></script>
+		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'script/docs.min.js' %}"></script>
+		<script src="{% static 'script/back-to-top.js' %}"></script>
 		<script>
 			$('#myTab a').click(function(e) {
 				e.preventDefault()
 				$(this).tab('show')
 			})
+            $("#numone").bind("input propertychange",function () {
+                var num=$("#numone").val()
+                var price={{ re_pro.money }}
+                var priceall = num*price+{{ re_pro.freight }}
+                $("#price").html(priceall)
+            })
 		</script>
 	</body>
 

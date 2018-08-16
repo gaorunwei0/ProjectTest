@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="zh-CN">
 
 	<head>
@@ -7,9 +8,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/font-awesome.min.css">
-		<link rel="stylesheet" href="css/theme.css">
+		<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/theme.css' %}">
 		<style>
 			#footer {
 				padding: 15px 0;
@@ -122,34 +123,44 @@
 	</head>
 
 	<body>
-		<div class="navbar-wrapper">
+
+<div class="navbar-wrapper">
 			<div class="container">
 				<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 					<div class="container">
 						<div class="navbar-header">
-							<a class="navbar-brand" href="index.html" style="font-size:32px;">尚筹网-创意产品众筹平台</a>
+							<a class="navbar-brand" href={% url 'index' %} style="font-size:32px;">尚筹网-创意产品众筹平台</a>
 						</div>
 						<div id="navbar" class="navbar-collapse collapse" style="float:right;">
-							<ul class="nav navbar-nav">
+{% if request.user.is_authenticated %}
+                            <ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> 尚硅谷<span class="caret"></span></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> {{ request.user }}<span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">
 										<li>
-											<a href="member.html"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
+											<a href="{% url 'users:member' %}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
 										</li>
-										<!--<li>-->
-											<!--<a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a>-->
-										<!--</li>-->
 										<li class="divider"></li>
 										<li>
-											<a href="index.html"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
+											<a href="{% url 'users:logout' %}"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
 										</li>
 									</ul>
 								</li>
 							</ul>
+{% else %}
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<a href={% url 'users:login' %}>登录</a>
+								</li>
+								<li>
+									<a href={% url 'users:reg' %}>注册</a>
+								</li>
+							</ul>
+ {% endif %}
 						</div>
 					</div>
 				</nav>
+
 			</div>
 		</div>
 
@@ -224,6 +235,9 @@
 									</div>
 								</div>
 							</div>
+
+                            <form class="form-horizontal" method="post" action="{% url 'project:start_step_one' %}" enctype="multipart/form-data">
+                                                {% csrf_token %}
 							<div class="panel-body">
 								<div class="container-fluid">
 									<div class="row clearfix">
@@ -236,54 +250,55 @@
 											<div class="page-header" style="    border-bottom-style: dashed;">
 												<h3>项目信息</h3>
 											</div>
-											<form class="form-horizontal">
+
 												<div class="form-group">
 													<label class="col-sm-2 control-label">分类信息</label>
 													<div class="col-sm-10">
-														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 科技</label>
-														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 设计</label>
-														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 公益</label>
-														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option3"> 农业</label>
+														<label class="radio-inline"><input type="radio" checked  name="inlineRadioOptions" id="inlineRadio1" value="1"> 科技</label>
+														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2"> 设计</label>
+														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3"> 公益</label>
+														<label class="radio-inline"><input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4"> 农业</label>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">项目名称</label>
 													<div class="col-sm-10">
-														<input type="text" class="form-control">
+														<input type="text" class="form-control" name="name">
+                                                        <div class="col-sm-2 control-label">{{ error }}</div>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">一句话简介</label>
 													<div class="col-sm-10">
-														<textarea class="form-control" rows="5"></textarea>
+														<textarea class="form-control" rows="5" name="text"></textarea>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">筹资金额（元）</label>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" style="width:100px;">
+														<input type="text" class="form-control" style="width:100px;" name="money">
 														<label class="control-label">筹资金额不能低于100元,不能高于1000000000元</label>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">筹资天数（天）</label>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" style="width:100px;">
+														<input type="text" class="form-control" style="width:100px;" name="time">
 														<label class="control-label">一般10-90天，建议30天</label>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">项目头图</label>
 													<div class="col-sm-10">
-														<button type="button" class="btn btn-primary btn-lg active">上传图片</button>
+														<input type="file" class="btn btn-primary btn-lg active" name="headimage">上传图片 </input>
 														<label class="control-label">图片上无文字,支持jpg、jpeg、png、gif格式，大小不超过2M，建议尺寸：740*457px</label>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">项目详情</label>
 													<div class="col-sm-10">
-														<button type="button" class="btn btn-primary btn-lg active">上传图片</button>
-														<label class="control-label">支持jpg、jpeg、png、gif格式，大小不超过2M，建议尺寸：宽740px</label>
+														<input type="file" class="btn btn-primary btn-lg active" name="helpimage">上传图片 </input>
+														<label class="control-label" >支持jpg、jpeg、png、gif格式，大小不超过2M，建议尺寸：宽740px</label>
 													</div>
 												</div>
 												<div class="page-header" style="    border-bottom-style: dashed;">
@@ -292,35 +307,38 @@
 												<div class="form-group">
 													<label class="col-sm-2 control-label">自我介绍</label>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" placeholder="一句话自我介绍，不超过40字">
+														<input type="text" class="form-control" placeholder="一句话自我介绍，不超过40字" name="usertext">
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">详细自我介绍</label>
 													<div class="col-sm-10">
-														<textarea class="form-control" rows="5" placeholder="向支持者详细介绍你自己或你的团队及项目背景，让支持者在最短时间内了解你，不超过160字"></textarea>
+														<textarea class="form-control" name="usertextlong" rows="5" placeholder="向支持者详细介绍你自己或你的团队及项目背景，让支持者在最短时间内了解你，不超过160字"></textarea>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">联系电话</label>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" placeholder="此信息不会显示在项目页面">
+														<input type="text" class="form-control" placeholder="此信息不会显示在项目页面" name="phone">
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-2 control-label">客服电话</label>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" placeholder="此信息显示在项目页面">
+														<input type="text" class="form-control" placeholder="此信息显示在项目页面" name="phonehelp">
 													</div>
 												</div>
-											</form>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="panel-footer" style="text-align:center;">
-								<button type="button" class="btn  btn-warning btn-lg" onclick="window.location.href='start-step-2.html'">下一步</button>
+{#								<button type="submit" class="btn  btn-warning btn-lg" onclick="window.location.href='{% url 'project:start_step_two' %}'">下一步</button>#}
+								<button type="submit" class="btn  btn-warning btn-lg" >下一步</button>
+
 							</div>
+                                <div class="panel-footer" style="text-align:center;"> {{ error }}  </div>
+                            </form>
 						</div>
 					</div>
 				</div>
@@ -348,10 +366,10 @@
 
 		</div>
 		<!-- /container -->
-		<script src="jquery/jquery-2.1.1.min.js"></script>
-		<script src="bootstrap/js/bootstrap.min.js"></script>
-		<script src="script/docs.min.js"></script>
-		<script src="script/back-to-top.js"></script>
+		<script src="{% static 'jquery/jquery-2.1.1.min.js' %}"></script>
+		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'script/docs.min.js' %}"></script>
+		<script src="{% static 'script/back-to-top.js' %}"></script>
 		<script>
 			$('#myTab a').click(function(e) {
 				e.preventDefault()

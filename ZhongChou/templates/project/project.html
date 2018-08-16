@@ -118,16 +118,16 @@
 							<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 								<ul class="nav navbar-nav">
 									<li>
-										<a rel="nofollow" href="index.html"><i class="glyphicon glyphicon-home"></i> 众筹首页</a>
+										<a rel="nofollow" href="{% url 'index' %}"><i class="glyphicon glyphicon-home"></i> 众筹首页</a>
 									</li>
 									<li>
-										<a rel="nofollow" href="projects.html"><i class="glyphicon glyphicon-th-large"></i> 众筹项目</a>
+										<a rel="nofollow" href="{% url 'project:project' %}"><i class="glyphicon glyphicon-th-large"></i> 众筹项目</a>
 									</li>
 									<li>
-										<a rel="nofollow" href="start.html"><i class="glyphicon glyphicon-edit"></i> 发起众筹</a>
+										<a rel="nofollow" href="{% url 'project:start_pro' %}"><i class="glyphicon glyphicon-edit"></i> 发起众筹</a>
 									</li>
 									<li>
-										<a rel="nofollow" href="minecrowdfunding.html"><i class="glyphicon glyphicon-user"></i> 我的众筹</a>
+										<a rel="nofollow" href="{% url 'users:owner_pro' %}"><i class="glyphicon glyphicon-user"></i> 我的众筹</a>
 									</li>
 								</ul>
 							</div>
@@ -174,9 +174,9 @@
 										<h3>
                                         已筹资金：￥{{ pro_item.money_now }}
                                     </h3>
-										<p><span>目标金额 ： {{ pro_item.money }}</span><span style="float:right;">达成 ： {% widthratio pro_item.money pro_item.money_now 1 %}%</span></p>
+										<p><span>目标金额 ： {{ pro_item.money }}</span><span style="float:right;">达成 ： {% widthratio pro_item.money_now pro_item.money 100 %}%</span></p>
 										<div class="progress" style="height:10px; margin-bottom: 5px;">
-											<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio pro_item.money pro_item.money_now 1 %}%;"></div>
+											<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {% widthratio pro_item.money_now pro_item.money 100 %}%;"></div>
 										</div>
 										<p>剩余 {{ time }} 天</p>
 										<div>
@@ -211,35 +211,35 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel panel-default" style="border-radius: 0px;">
-						<div class="panel-heading">
-							<h3>
-								￥1.00 <span style="float:right;font-size:12px;">无限额，447位支持者</span>
-							</h3>
-						</div>
-						<div class="panel-body">
-							<p>配送费用：包邮</p>
-							<p>预计发放时间：项目筹款成功后的50天内</p>
-							<button type="button" class="btn  btn-warning btn-lg" onclick="window.location.href='pay-step-1.html'">支持</button>
-							<br><br>
-							<p>感谢您的支持，在众筹开始后，您将以79元的优惠价格获得“遇见彩虹?”智能插座一件（参考价208元）。</p>
-						</div>
-					</div>
+
+                {% for foo_re in pro_re %}
 
 					<div class="panel panel-default" style="border-radius: 0px;">
 						<div class="panel-heading">
 							<h3>
-								￥149.00 <span style="float:right;font-size:12px;">限额2000位，剩余1966位</span>
+								￥{{ foo_re.money }} <span style="float:right;font-size:12px;">{% if foo_re.limit %}
+                                限额{{ foo_re.num_limit }}位
+                                {% else %}
+								 不限额
+								{% endif %}，{{ foo_re.fav_num }}位支持者</span>
 							</h3>
 						</div>
 						<div class="panel-body">
-							<p>配送费用：包邮</p>
-							<p>预计发放时间：项目筹款成功后的50天内</p>
+							<p>配送费用：{% if foo_re.freight %}
+                                {{ foo_re.freight }}
+                                {% else %}
+                                包邮
+							{% endif %}</p>
+							<p>预计发放时间：项目筹款成功后的{{ foo_re.re_time }}天内</p>
 							<button type="button" class="btn  btn-warning btn-lg" onclick="window.location.href='pay-step-1.html'">支持</button>
 							<br><br>
-							<p>感谢您的支持，在众筹开始后，您将以79元的优惠价格获得“遇见彩虹?”智能插座一件（参考价208元）。</p>
+							<p>感谢您的支持，在众筹开始后，您将以{{ foo_re.money }}元的优惠价格获得{{ pro_item.name }}。</p>
 						</div>
 					</div>
+
+                {% endfor %}
+
+
 					<div class=" panel panel-default" style="border-radius: 0px;">
 						<div class="panel-heading">
 							<h3>
@@ -261,15 +261,20 @@
 					</div>
 
 
-					{% for foo in fav_project %}
 
-                        <div class="prjtip panel panel-default" style="border-radius: 0px;">
+
+                    <div class="prjtip panel panel-default" style="border-radius: 0px;" id="prj_1">
 						<div class="panel-body">
-							<img src="{{ MEDIA_URL }}{{ foo.headerimage }}" width="100%" height="100%">
+							<img src="{{ MEDIA_URL }}{{ fav_project_1.headerimage }}" width="100%" height="100%">
 						</div>
 					</div>
 
-					{% endfor %}
+                     <div class="prjtip panel panel-default" style="border-radius: 0px;" id="prj_2">
+						<div class="panel-body">
+							<img src="{{ MEDIA_URL }}{{ fav_project_2.headerimage }}" width="100%" height="100%">
+						</div>
+					</div>
+
 
 
 
@@ -314,58 +319,50 @@
 							<div class="row clearfix">
 								<div class="col-sm-3 col-md-3 column" id="myScrollspy">
 									<ul class="nav nav-tabs nav-stacked">
-										<li class="active">
-											<a href="#section-1">￥1.00</a>
-										</li>
-										<li class="active">
-											<a href="#section-2">￥149.00</a>
-										</li>
-										<li class="active">
-											<a href="#section-3">￥249.00</a>
-										</li>
-										<li class="active">
-											<a href="#section-4">￥549.00</a>
-										</li>
-										<li class="active">
-											<a href="#section-5">￥1999.00</a>
-										</li>
+                                        {% for re_all in pro_re_all %}
+                                            <li class="active">
+                                                <a href="#section-{{ re_all.id }}">￥{{ re_all.money }}</a>
+                                            </li>
+                                        {% endfor %}
+
+{#										<li class="active">#}
+{#											<a href="#section-1">￥1.00</a>#}
+{#										</li>#}
+{#										<li class="active">#}
+{#											<a href="#section-2">￥149.00</a>#}
+{#										</li>#}
+{#										<li class="active">#}
+{#											<a href="#section-3">￥249.00</a>#}
+{#										</li>#}
+{#										<li class="active">#}
+{#											<a href="#section-4">￥549.00</a>#}
+{#										</li>#}
+{#										<li class="active">#}
+{#											<a href="#section-5">￥1999.00</a>#}
+{#										</li>#}
 									</ul>
 								</div>
 								<div id="navList" class="col-sm-9 col-md-9 column" style="height:400px;overflow-y:auto;">
-									<h2 id="section-1" style="border-bottom:1px dashed #ddd;"><span style="font-size:20px;font-weight:bold;">￥1.00</span><span style="font-size:12px;margin-left:60px;">无限额，223位支持者</span></h2>
-									<p>配送费用：全国包邮</p>
-									<p>预计发放时间：项目筹款成功后的30天内</p>
-									<button type="button" class="btn  btn-warning btn-lg " onclick="window.location.href='pay-step-1.html'">支持</button>
-									<br><br>
-									<p>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</p>
-									<hr>
-									<h2 id="section-2" style="border-bottom:1px dashed #ddd;"><span style="font-size:20px;font-weight:bold;">￥149.00</span><span style="font-size:12px;margin-left:60px;">无限额，223位支持者</span></h2>
-									<p>配送费用：全国包邮</p>
-									<p>预计发放时间：项目筹款成功后的30天内</p>
-									<button type="button" class="btn  btn-warning btn-lg " onclick="window.location.href='pay-step-1.html'">支持</button>
-									<br><br>
-									<p>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</p>
-									<hr>
-									<h2 id="section-3" style="border-bottom:1px dashed #ddd;"><span style="font-size:20px;font-weight:bold;">￥249.00</span><span style="font-size:12px;margin-left:60px;">无限额，223位支持者</span></h2>
-									<p>配送费用：全国包邮</p>
-									<p>预计发放时间：项目筹款成功后的30天内</p>
-									<button type="button" class="btn  btn-warning btn-lg " onclick="window.location.href='pay-step-1.html'">支持</button>
-									<br><br>
-									<p>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</p>
-									<hr>
-									<h2 id="section-4" style="border-bottom:1px dashed #ddd;"><span style="font-size:20px;font-weight:bold;">￥549.00</span><span style="font-size:12px;margin-left:60px;">无限额，223位支持者</span></h2>
-									<p>配送费用：全国包邮</p>
-									<p>预计发放时间：项目筹款成功后的30天内</p>
-									<button type="button" class="btn  btn-warning btn-lg " onclick="window.location.href='pay-step-1.html'">支持</button>
-									<br><br>
-									<p>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</p>
-									<hr>
-									<h2 id="section-5" style="border-bottom:1px dashed #ddd;"><span style="font-size:20px;font-weight:bold;">￥1999.00</span><span style="font-size:12px;margin-left:60px;">无限额，223位支持者</span></h2>
-									<p>配送费用：全国包邮</p>
-									<p>预计发放时间：项目筹款成功后的30天内</p>
-									<button type="button" class="btn  btn-warning btn-lg " onclick="window.location.href='pay-step-1.html'">支持</button>
-									<br><br>
-									<p>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</p>
+                                    {% for re_all in pro_re_all %}
+                                        <h2 id="section-{{ re_all.id }}" style="border-bottom:1px dashed #ddd;"><span style="font-size:20px;font-weight:bold;">￥{{ re_all.money }}</span><span style="font-size:12px;margin-left:60px;">{% if re_all.limit %}
+                                限额{{ re_all.num_limit }}位
+                                {% else %}
+								 不限额
+								{% endif %}，{{ re_all.fav_num }}位支持者</span></h2>
+
+                                        <p>配送费用：{% if re_all.freight %}
+                                        {{ re_all.freight }}
+                                        {% else %}
+                                        包邮
+                                        {% endif %}</p>0
+
+                                        <p>预计发放时间：项目筹款成功后的{{ re_all.re_time }}天内</p>
+                                        <button type="button" class="btn  btn-warning btn-lg" onclick="window.location.href='{% url 'trade:pay_1' re_all.id %}'" >支持</button>
+                                        <br><br>
+                                        <p>{{ re_all.re_text }}</p>
+                                        <hr>
+                                    {% endfor %}
+
 								</div>
 							</div>
 						</div>
@@ -381,9 +378,13 @@
 		<script src="{% static 'script/back-to-top.js' %}"></script>
 		<script>
 			$(".prjtip img").css("cursor", "pointer");
-			$(".prjtip img").click(function() {
-				window.location.href = 'project.html';
+			$("#prj_1").click(function() {
+				window.location.href = '{% url 'project:project_item' fav_project_1.id%}';
 			});
+			$("#prj_2").click(function() {
+				window.location.href = '{% url 'project:project_item' fav_project_2.id%}';
+			});
+
 		</script>
 	</body>
 

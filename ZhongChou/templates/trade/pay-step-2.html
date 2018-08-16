@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="zh-CN">
 
 	<head>
@@ -7,9 +8,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/font-awesome.min.css">
-		<link rel="stylesheet" href="css/theme.css">
+		<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/theme.css' %}">
 		<style>
 			#footer {
 				padding: 15px 0;
@@ -122,34 +123,44 @@
 	</head>
 
 	<body>
-		<div class="navbar-wrapper">
+
+<div class="navbar-wrapper">
 			<div class="container">
 				<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 					<div class="container">
 						<div class="navbar-header">
-							<a class="navbar-brand" href="index.html" style="font-size:32px;">尚筹网-创意产品众筹平台</a>
+							<a class="navbar-brand" href={% url 'index' %} style="font-size:32px;">尚筹网-创意产品众筹平台</a>
 						</div>
 						<div id="navbar" class="navbar-collapse collapse" style="float:right;">
-							<ul class="nav navbar-nav">
+{% if request.user.is_authenticated %}
+                            <ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> 尚硅谷<span class="caret"></span></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> {{ request.user }}<span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">
 										<li>
-											<a href="member.html"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
+											<a href="{% url 'users:member' %}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a>
 										</li>
-										<!--<li>-->
-											<!--<a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a>-->
-										<!--</li>-->
 										<li class="divider"></li>
 										<li>
-											<a href="index.html"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
+											<a href="{% url 'users:logout' %}"><i class="glyphicon glyphicon-off"></i> 退出系统</a>
 										</li>
 									</ul>
 								</li>
 							</ul>
+{% else %}
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<a href={% url 'users:login' %}>登录</a>
+								</li>
+								<li>
+									<a href={% url 'users:reg' %}>注册</a>
+								</li>
+							</ul>
+ {% endif %}
 						</div>
 					</div>
 				</nav>
+
 			</div>
 		</div>
 
@@ -221,18 +232,18 @@
 											</blockquote>
 										</div>
 										<div class="col-md-12 column" style="padding:0 120px;">
-											<div class="radio">
+
+                                            {% for foo in add_all %}
+
+                                                <div class="radio">
 												<label>
-                                        <input type="radio" name="optionsRadios" value="option1" checked>
-                                        xxxxx 188****3342 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                                      </label>
+                                        <input type="radio" name="optionsRadios" value="{{ foo.id }}" {% if  foo.index %} 1 {% else %}checked="checked"{% endif %}>
+                                        {{ foo.signer_name }} {{ foo.signer_mobile }} {{ foo.address }}
+                                                </label>
 											</div>
-											<div class="radio">
-												<label>
-                                        <input type="radio" name="optionsRadios" value="option2">
-                                        xxxxx 188****3342 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                                      </label>
-											</div>
+
+                                            {% endfor %}
+
 											<div class="radio">
 												<label>
                                         <input type="radio" name="optionsRadios" value="option2">
@@ -247,29 +258,31 @@
 											<div class="panel panel-default" style="border-style: dashed;background-color:#eceeef">
 												<div class="panel-body">
 													<div class="col-md-12 column">
-														<form class="form-horizontal">
+														<form class="form-horizontal" action="{% url 'trade:pay_2' re_pro.id %}" method="post">
+                                                            {% csrf_token %}
 															<div class="form-group">
 																<label class="col-sm-2 control-label">收货人（*）</label>
 																<div class="col-sm-10">
-																	<input type="text" class="form-control" style="width:200px;" placeholder="姓名：xxxx">
+																	<input type="text" class="form-control" style="width:200px;" placeholder="姓名：xxxx" name="name">
 																</div>
 															</div>
 															<div class="form-group">
 																<label class="col-sm-2 control-label">手机（*）</label>
 																<div class="col-sm-10">
-																	<input class="form-control" type="text" style="width:200px;" placeholder="请填写11位手机号码"></input>
+																	<input class="form-control" type="text" style="width:200px;" placeholder="请填写11位手机号码" name="number">
 																</div>
 															</div>
 															<div class="form-group">
 																<label class="col-sm-2 control-label">地址（*）</label>
 																<div class="col-sm-10">
-																	<input class="form-control" type="text" style="width:400px;" placeholder="请填写11位手机号码"></input>
-																</div>
+																	<input class="form-control" type="text" style="width:400px;" placeholder="请填写地址" name="address">
+                                                                    <input type="hidden" value="{{ num }}" name="num">
+                                                                </div>
 															</div>
 															<div class="form-group">
 																<label class="col-sm-2 control-label"></label>
 																<div class="col-sm-10">
-																	<button type="button" class="btn btn-primary">确认配送信息</button>
+																	<button type="submit" class="btn btn-primary" id="address">确认配送信息</button>
 																</div>
 															</div>
 														</form>
@@ -346,12 +359,15 @@
 												</thead>
 												<tbody>
 													<tr>
-														<td>活性富氢净水直饮机</td>
-														<td>深圳市博实永道电子商务有限公司</td>
-														<td>每满1750人抽取一台活性富氢净水直饮机，至少抽取一台。抽取名额（小数点后一位四舍五入）=参与人数÷1750人，由苏宁官方抽取。</td>
-														<td>1</td>
-														<td style="color:#F60">￥ 1.00</td>
-														<td>免运费</td>
+														<td>{{ re_pro.pro.name }}</td>
+														<td>{{ re_pro.pro.owner.username }}</td>
+														<td>{{ re_pro.re_text }}</td>
+                                                        <td>{{ num }}</td>
+														<td style="color:#F60">{{ re_pro.money }}</td>
+														<td>{% if re_pro.freight %}
+														￥{{ re_pro.freight }}
+                                                            {% else %}免运费
+														{% endif %}</td>
 													</tr>
 												</tbody>
 											</table>
@@ -375,11 +391,11 @@
 										<div class="col-md-12 column">
 											<div class="alert alert-warning alert-dismissable" style="text-align:right; border:2px solid #ffc287;">
 												<ul style="list-style:none;">
-													<li style="margin-top:10px;">支持金额：<span style="color:red;">￥1.00</span></li>
-													<li style="margin-top:10px;">配送费用：<span style="color:red;">￥0.00</span></li>
+													<li style="margin-top:10px;">支持金额：<span style="color:red;">￥{% widthratio re_pro.money 1 num %}</span></li>
+													<li style="margin-top:10px;">配送费用：<span style="color:red;">￥{{ re_pro.freight }}</span></li>
 													<li style="margin-top:10px;">优惠金额：<span style="color:red;">-￥0.00</span></li>
 													<li style="margin-top:10px;margin-bottom:10px;">
-														<h2>支付总金额：<span style="color:red;">￥1.00</span></h2></li>
+														<h2>支付总金额：<span style="color:red;">￥{{ money_all }}</span></h2></li>
 													<li style="margin-top:10px;padding:5px;border:1px solid #F00;display:initial;background:#FFF;">
 														<i class="glyphicon glyphicon-info-sign"></i> <strong>您需要先 <a href="#address">设置配送信息</a> ,再提交订单</strong>
 													</li>
@@ -448,15 +464,39 @@
 
 		</div>
 		<!-- /container -->
-		<script src="jquery/jquery-2.1.1.min.js"></script>
-		<script src="bootstrap/js/bootstrap.min.js"></script>
-		<script src="script/docs.min.js"></script>
-		<script src="script/back-to-top.js"></script>
+		<script src="{% static 'jquery/jquery-2.1.1.min.js' %}"></script>
+		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'script/docs.min.js' %}"></script>
+		<script src="{% static 'script/back-to-top.js' %}"></script>
 		<script>
 			$('#myTab a').click(function(e) {
-				e.preventDefault()
+				e.preventDefault();
 				$(this).tab('show')
-			})
+			});
+
+            {#$(".btn-primary").click(function (e) {#}
+            {#    $.ajax(#}
+            {#        {#}
+            {#            url:"{% url 'trade:address' %}",#}
+            {#            data:{#}
+            {#                'name':$("input[name^='name']").val(),#}
+            {#                'number':$("input[name^='number']").val(),#}
+            {#                'address':$("input[name^='address']").val(),#}
+            {#            },#}
+            {#            success:function (data) {#}
+            {#                alert(data['name']);#}
+            {#                window.location.href='{% url 'trade:pay_2' re_pro.id  %}'#}
+            {#            },#}
+            {#        },#}
+            {#    )#}
+            {#)#}
+
+            var val = $("input:checked").val();
+            if (val) {
+                $(".btn-warning").removeAttr("disabled");
+            }
+            
+
 		</script>
 	</body>
 

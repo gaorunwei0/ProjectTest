@@ -18,6 +18,7 @@ import xadmin
 from users.views import index
 
 
+
 # from django.contrib import admin
 
 urlpatterns = [
@@ -26,5 +27,6 @@ urlpatterns = [
 	url(r'^$',index,name='index'),
 	url(r'^users/', include('users.urls', namespace='users')),
 	url(r'^project/', include('project.urls', namespace='project')),
+	url(r'^trade/', include('trade.urls', namespace='trade')),
 
 ]

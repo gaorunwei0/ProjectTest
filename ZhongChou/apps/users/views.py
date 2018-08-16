@@ -8,10 +8,49 @@ from users.models import UserProfile, UserProfile_tem
 import random
 from django.core.mail import send_mail
 from datetime import datetime, timedelta
+from project.models import ProjectProfile
 
+def get_code():
+	data = '0123456789'
+	email_codes = []
+	for i in range(4):
+		email_codes.append(random.choice(data))
+	email_code = ''.join(email_codes)
+	return email_code
 
 def index(request):
-	return render(request, 'index.html')
+	allproject = ProjectProfile.objects.all()
+
+	#轮播图
+	head_pro = allproject.order_by('favnums')
+	head_pro_1 = head_pro[0]
+	head_pro_2 = head_pro[1]
+	head_pro_3 = head_pro[2]
+
+	#广告位
+	add_pro = allproject.order_by('-add_level')[:3]
+
+	#分类
+
+	cat1 = allproject.filter(category=1)[:4]
+	cat2 = allproject.filter(category=2)[:4]
+	cat3 = allproject.filter(category=4)[:4]
+	cat_other = allproject.filter(category=3)[:4]
+
+	time_now = datetime.now()
+
+
+	return render(request, 'index.html',{
+		'head_pro_1':head_pro_1,
+		'head_pro_2':head_pro_2,
+		'head_pro_3':head_pro_3,
+		'add_pro':add_pro,
+		'cat1':cat1,
+		'cat2':cat2,
+		'cat3':cat3,
+		'cat_other':cat_other,
+		'time_now':time_now,
+	})
 
 
 def user_reg(request):
@@ -141,11 +180,8 @@ def user_apply_2(request):
 		apply_two = Userapply_2_DataForm(request.POST)
 		if apply_two.is_valid():
 
-			data = '0123456789'
-			email_codes = []
-			for i in range(4):
-				email_codes.append(random.choice(data))
-			email_code = ''.join(email_codes)
+
+			email_code =get_code()
 
 			email_yanzheng = apply_two.cleaned_data['email_yanzheng']
 			a = UserProfile_tem.objects.get(user=request.user.username)
@@ -194,11 +230,7 @@ def code_rest(request):
 	print(time_last)
 	if time_now-time_last>timedelta(seconds=60):
 
-		data = '0123456789'
-		email_codes = []
-		for i in range(4):
-			email_codes.append(random.choice(data))
-		email_code = ''.join(email_codes)
+		email_code = get_code()
 		a.email_code = email_code
 		a.time_last=time_now
 		a.save()
@@ -215,4 +247,10 @@ def code_rest(request):
 
 def owner_pro(request):
 	if request.method=="GET":
-		return render(request, 'users/minecrowdfunding.html')
+		myobj = ProjectProfile.objects.filter(owner=request.user)
+
+		time_now = datetime.now()
+		return render(request, 'users/minecrowdfunding.html',{
+			'myobj':myobj,
+			'time_now':time_now,
+		})
