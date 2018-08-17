@@ -149,7 +149,7 @@
 								{{ pro_item.text }}
 							</div>
 							<div style="float:right;">
-								<button type="button" class="btn btn-default"><i style="color:#f60" class="glyphicon glyphicon-heart"></i> 关注 {{ pro_item.fav_p }}</button>
+								<button id="fav" type="button" class="btn btn-default"><i style="color:#f60" class="glyphicon glyphicon-heart"></i> {% if is_fav %}已关注{% else %}关注 {{ pro_item.fav_p }}{% endif %}</button>
 							</div>
 						</div>
 					</div>
@@ -231,7 +231,7 @@
                                 包邮
 							{% endif %}</p>
 							<p>预计发放时间：项目筹款成功后的{{ foo_re.re_time }}天内</p>
-							<button type="button" class="btn  btn-warning btn-lg" onclick="window.location.href='pay-step-1.html'">支持</button>
+							<button type="button" class="btn  btn-warning btn-lg" onclick="window.location.href='{% url 'trade:pay_1' foo_re.id %}'">支持</button>
 							<br><br>
 							<p>感谢您的支持，在众筹开始后，您将以{{ foo_re.money }}元的优惠价格获得{{ pro_item.name }}。</p>
 						</div>
@@ -385,6 +385,18 @@
 				window.location.href = '{% url 'project:project_item' fav_project_2.id%}';
 			});
 
+            $("#fav").click(function () {
+                $.ajax({
+                    url:"{% url 'project:fav' %}",
+                    data:{
+                        'is_fav':{{ is_fav }},
+                        'pro_id':{{ pro_item.id }},
+                    },
+                    success:function (data) {
+                        window.location.href=data
+                    }
+                })
+            })
 		</script>
 	</body>
 

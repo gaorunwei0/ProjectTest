@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 
 from ZhongChou import settings
+from trade.models import OrderInfo
 from users.forms import UserLoginForm, UserRegForm, UserapplyDataForm, Userapply_1_DataForm, Userapply_2_DataForm
 from users.models import UserProfile, UserProfile_tem
 import random
@@ -248,9 +250,17 @@ def code_rest(request):
 def owner_pro(request):
 	if request.method=="GET":
 		myobj = ProjectProfile.objects.filter(owner=request.user)
+		myorder_list = OrderInfo.objects.filter(Q(user=request.user) & Q(is_del=False))
 
 		time_now = datetime.now()
 		return render(request, 'users/minecrowdfunding.html',{
 			'myobj':myobj,
 			'time_now':time_now,
+			'myorder_list':myorder_list,
 		})
+
+def del_order(request,order_id):
+	order = OrderInfo.objects.get(id=order_id)
+	order.is_del = True
+	order.save()
+	return redirect(reverse('users:owner_pro'))

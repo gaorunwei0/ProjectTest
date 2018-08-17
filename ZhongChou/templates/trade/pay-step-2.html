@@ -491,7 +491,8 @@
                         "invoice_text":invoice_text,
                         "order_mount":order_mount,
                         "post_script":post_script,
-                        "return_info_id":{{ re_pro.id }}
+                        "return_info_id":{{ re_pro.id }},
+                        "return_num":{{ num }},
                     },
                     success:function (data) {
                         window.location.href=data
