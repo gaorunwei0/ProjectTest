@@ -304,13 +304,13 @@
 										<div class="col-md-12 column" style="padding:0 120px;">
 											<div class="radio">
 												<label>
-                                        <input type="radio" name="optionsRadios1" value="option1" checked>
+                                        <input type="radio" name="optionsRadios1" value=1 checked>
                                         无需发票
                                       </label>
 											</div>
 											<div class="radio">
 												<label>
-                                        <input type="radio" name="optionsRadios1" value="option2">
+                                        <input type="radio" name="optionsRadios1" value=2>
                                         需要发票
                                       </label>
 											</div>
@@ -326,7 +326,7 @@
 															<div class="form-group">
 																<label class="col-sm-2 control-label">发票抬头（*）</label>
 																<div class="col-sm-10">
-																	<input type="text" class="form-control" style="width:200px;" placeholder="个人">
+																	<input type="text" class="form-control" style="width:200px;" placeholder="个人" id="invoice">
 																</div>
 															</div>
 														</form>
@@ -376,7 +376,7 @@
 											<div class="form-group">
 												<label class="col-sm-2 control-label">备注</label>
 												<div class="col-sm-10">
-													<textarea class="form-control" rows="1" placeholder="填写关于回报或发起人希望您备注的信息"></textarea>
+													<textarea class="form-control" rows="1" placeholder="填写关于回报或发起人希望您备注的信息" id="text"></textarea>
 												</div>
 											</div>
 										</div>
@@ -403,7 +403,7 @@
 														请在下单后15分钟内付款，否则您的订单会被自动关闭。
 													</li>
 													<li style="margin-top:10px;">
-														<button disabled="disabled" type="button" class="btn btn-warning btn-lg" onclick="window.location.href='pay-step-3.html'"><i class="glyphicon glyphicon-credit-card"></i> 立即付款</button>
+														<button disabled="disabled" type="button" class="btn btn-warning btn-lg" ><i class="glyphicon glyphicon-credit-card"></i> 立即付款</button>
 													</li>
 													<li style="margin-top:10px;">
 														<div class="checkbox">
@@ -474,28 +474,30 @@
 				$(this).tab('show')
 			});
 
-            {#$(".btn-primary").click(function (e) {#}
-            {#    $.ajax(#}
-            {#        {#}
-            {#            url:"{% url 'trade:address' %}",#}
-            {#            data:{#}
-            {#                'name':$("input[name^='name']").val(),#}
-            {#                'number':$("input[name^='number']").val(),#}
-            {#                'address':$("input[name^='address']").val(),#}
-            {#            },#}
-            {#            success:function (data) {#}
-            {#                alert(data['name']);#}
-            {#                window.location.href='{% url 'trade:pay_2' re_pro.id  %}'#}
-            {#            },#}
-            {#        },#}
-            {#    )#}
-            {#)#}
-
-            var val = $("input:checked").val();
+            var val = $("input[name='optionsRadios']:checked").val();
             if (val) {
                 $(".btn-warning").removeAttr("disabled");
             }
-            
+            $(".btn-warning").click(function (e) {
+                var invoice = $("input[name='optionsRadios1']:checked").val();
+                var invoice_text = $("#invoice").val();
+                var order_mount = {{ money_all }};
+                var post_script = $("#text").val();
+                $.ajax({
+                    url:"{% url 'trade:order_set' %}",
+                    data:{
+                        "address":val,
+                        "invoice":invoice,
+                        "invoice_text":invoice_text,
+                        "order_mount":order_mount,
+                        "post_script":post_script,
+                        "return_info_id":{{ re_pro.id }}
+                    },
+                    success:function (data) {
+                        window.location.href=data
+                    }
+                })
+            })
 
 		</script>
 	</body>

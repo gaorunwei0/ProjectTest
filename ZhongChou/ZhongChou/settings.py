@@ -150,3 +150,6 @@ EMAIL_HOST = 'smtp.163.com'   #发送邮件的邮箱 的 SMTP服务器，这里�
 EMAIL_PORT = 25     #发件箱的SMTP服务器端口
 EMAIL_HOST_USER = 'sunm8917@163.com'    #发送邮件的邮箱地址
 EMAIL_HOST_PASSWORD = 'huanguang8917'         #发送邮件的邮箱密码(这里使用的是授权码)
+
+private_key_path = os.path.join(BASE_DIR,"apps/trade/keys/private_key_2048.txt")
+ali_public_path = os.path.join(BASE_DIR,"apps/trade/keys/alipay_key_2048.txt")
